@@ -1,51 +1,22 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_getx_study/global_repository.dart';
-import 'package:flutter_getx_study/theme_repository.dart';
-import 'package:get/get.dart';
+import 'package:design_tokens/design_tokens.dart';
+import 'package:repository/repository.dart';
+import 'package:localization/localization.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await GlobalRepository.setPrefs();
 
-  runApp(MyApp());
+  runApp(
+    StakatakaThemeWidget(
+      child: App(),
+    ),
+  );
 }
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyApp createState() => _MyApp();
-}
-
-class _MyApp extends State<MyApp> with WidgetsBindingObserver {
-  final themeRepository = ThemeRepository();
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance!.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangePlatformBrightness() {
-    if (themeRepository.themeMode == ThemeMode.system) {
-      final isDarkMode = WidgetsBinding.instance!.window.platformBrightness == Brightness.dark;
-
-      if (isDarkMode) {
-        Get.changeThemeMode(ThemeMode.dark);
-      } else {
-        Get.changeThemeMode(ThemeMode.light);
-      }
-    }
-
-    super.didChangePlatformBrightness();
-  }
-
+class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -56,8 +27,11 @@ class _MyApp extends State<MyApp> with WidgetsBindingObserver {
       darkTheme: ThemeData.dark().copyWith(
         backgroundColor: Colors.black,
       ),
-      themeMode: themeRepository.themeMode,
+      themeMode: ThemeService().themeMode,
       home: MyHomePage(),
+      translations: LocalizationService(),
+      locale: LocalizationService.locale,
+      fallbackLocale: LocalizationService.defaultLocale,
     );
   }
 }
@@ -73,21 +47,34 @@ class MyHomePage extends StatelessWidget {
             TextButton(
               child: Text('change to light'),
               onPressed: () {
-                ThemeRepository().changeThemeMode(ThemeMode.light);
+                ThemeService().changeThemeMode(ThemeMode.light);
               },
             ),
             TextButton(
               child: Text('change to dark'),
               onPressed: () {
-                ThemeRepository().changeThemeMode(ThemeMode.dark);
+                ThemeService().changeThemeMode(ThemeMode.dark);
               },
             ),
             TextButton(
               child: Text('change to system'),
               onPressed: () {
-                ThemeRepository().changeThemeMode(ThemeMode.system);
+                ThemeService().changeThemeMode(ThemeMode.system);
               },
             ),
+            Text('test'.tr),
+            ...LocalizationService.langs
+                .map(
+                  (e) => TextButton(
+                    onPressed: () {
+                      LocalizationService.changeLocale(e);
+                    },
+                    child: Text(
+                      e,
+                    ),
+                  ),
+                )
+                .toList(),
           ],
         ),
       ),

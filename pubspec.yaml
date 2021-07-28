@@ -11,10 +11,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
-  get: ^4.2.4
-  get_storage: ^2.0.3
-  shared_preferences: ^2.0.6
+
+  design_tokens:
+    git:
+      url: https://github.com/Stakataka/design_tokens.git
+      ref: main
+  repository:
+    git:
+      url: https://github.com/Stakataka/repository.git
+      ref: main
+  localization:
+    path: ../../Documents/stakataka/localization
+
   cupertino_icons: ^1.0.2
 
 dev_dependencies:
